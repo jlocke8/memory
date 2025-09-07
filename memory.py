@@ -4,6 +4,10 @@ import random
 import time
 import re
 import subprocess
+import pyttsx3
+
+#initialize speech engine
+speak = pyttsx3.init()
 
 #define game commands
 game_commands = [['help', '?', 'h'], ['exit', 'quit', 'q', 'x'], ['show', 's', 'status'],['repeat', 'r', 'again', 'a', 'peek', 'p'], \
@@ -76,7 +80,7 @@ responses_dict = \
 'Youll get it. Keep trying.']}
 
 #function to print responses and speak responses
-def sayResponse(custom_text , response_type):
+def sayResponse(custom_text , response_type, is_print = True):
     if custom_text is not None:
         response = custom_text
     else:
@@ -94,9 +98,13 @@ def sayResponse(custom_text , response_type):
             pass
         else:
             pass
-
-    print(response)    
-    result = subprocess.run(["espeak", response])
+    if is_print is True:
+        print(response)    
+    
+#    result = subprocess.run(["espeak", response])
+    
+    speak.say(response)
+    speak.runAndWait()
 
 #-----------game loop---------
 while state_game != 'DONE':
@@ -112,24 +120,27 @@ while state_game != 'DONE':
     #game state, display numbers
     elif state_game == 'DISPLAY':
         print("\n")
-        print("Memorize the following numbers as displayed. Then enter them from memory.\n")
-        result = subprocess.run(["espeak", "Memorize the following numbers as displayed. Then enter them from memory.\n"])
+        #print("Memorize the following numbers as displayed. Then enter them from memory.\n")
+        #result = subprocess.run(["espeak", "Memorize the following numbers as displayed. Then enter them from memory.\n"])
+        sayResponse("Memorize the following numbers as displayed. Then enter them from memory.\n", None)
         time.sleep(2)
         #show numbers sequentially
         print(*memory_numbers[0: number_level])
         for i in range( number_level):
             #time.sleep(1)
             #print(str(memory_numbers[i]) + "  ")
-            result = subprocess.run(["espeak", str(memory_numbers[i]) ])
+            sayResponse(str(memory_numbers[i]), None, False)
+            #result = subprocess.run(["espeak", str(memory_numbers[i]) ])
 #            print(str(memory_numbers[i]) + "  ", end=" ")
             time.sleep(1)
 
         time.sleep(1)
         #clear numbers from console
         print ("\033[A\033[K\033[A")  #move curser up one line clear line and move curser up line
-        
-        print("\nWhat are the " + str(number_level) + " number(s) I just showed?:\n")
-        result = subprocess.run(["espeak", "\nWhat are the " + str(number_level) + " numbers I just showed?:\n"])
+         
+        #print("\nWhat are the " + str(number_level) + " number(s) I just showed?:\n")
+        #result = subprocess.run(["espeak", "\nWhat are the " + str(number_level) + " numbers I just showed?:\n"])
+        sayResponse("\nWhat are the " + str(number_level) + " numbers I just showed?:\n", None)
         #for i in range( number_level+1):
         #    print ("\033[A\033[K\033[A")  #move curser up one line clear line and move curser up line
 
